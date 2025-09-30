@@ -1,6 +1,16 @@
 import streamlit as st
 import pandas as pd
 import matplotlib.pyplot as plt
+import matplotlib.font_manager as fm
+import os
+
+font_path = os.path.join("fonts", "NanumGothic-Regular.ttf")
+if os.path.exists(font_path):
+    fontprop = fm.FontProperties(fname=font_path)
+    plt.rcParams['font.family'] = fontprop.get_name()
+    plt.rcParams['axes.unicode_minus'] = False
+else:
+    st.warning("한글 폰트 파일을 찾을 수 없습니다. 기본 폰트로 표시됩니다.")
 
 st.title("🧪 카탈레이스(H₂O₂ 분해) 실험 활동지")
 st.write("""
@@ -34,8 +44,10 @@ if len(edited_df) > 0 and pd.to_numeric(edited_df["기포량(ml)"], errors="coer
     colors = ["#ffb347", "#b0e0e6", "#90ee90", "#f08080", "#b19cd9"]
     fig, ax = plt.subplots()
     ax.bar(x, y, color=colors[:len(x)])
-    ax.set_ylabel("기포량 (ml)")
-    ax.set_title("시료별 H₂O₂ 분해 생성 기포량")
+    ax.set_ylabel("기포량 (ml)", fontproperties=fontprop if 'fontprop' in locals() else None)
+    ax.set_title("시료별 H₂O₂ 분해 생성 기포량", fontproperties=fontprop if 'fontprop' in locals() else None)
+    for label in ax.get_xticklabels():
+        label.set_fontproperties(fontprop if 'fontprop' in locals() else None)
     st.pyplot(fig)
 else:
     st.info("실험값을 입력하면 결과가 시각화됩니다.")
